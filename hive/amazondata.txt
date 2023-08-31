@@ -1,0 +1,17 @@
+hive> create database amazondb;
+
+hive> use amazondb;
+
+hive> create table if not exists healthcare(marketplace String, customer_id String, review_id String, product_id String, product_parent String, product_title String, product_category String, star_rating String, helpful_votes String, total_votes String, vine String, verified_purchase String, review_headline String, review_body String, review_date String) row format delimited fields terminated by '\t' lines terminated by '\n' stored as textfile tblproperties("skip.header.line.count"="1");
+
+hive> load data local inpath '/home/hduser/backup/big-data/Big_Data_Java/Big-Data-Technology/amazonHealthCare.tsv' 
+    > into table amazondb.healthcare;
+
+hive> insert overwrite local directory '/home/hduser/hive/BigTechnology/verifiedProuct.tsv' 
+    > row format delimited fields terminated by ',' 
+    > select product_id, max(star_rating), min(star_rating), sum(helpful_votes) from healthcare 
+    > where verified_purchase = 'Y'
+    > group by 
+    > product_id;
+
+
